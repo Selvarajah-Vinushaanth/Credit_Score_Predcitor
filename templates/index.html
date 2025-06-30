@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Credit Score Predictor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="icon" href="https://tse1.mm.bing.net/th/id/OIP.yUCxY7pd9YjuoRylGf6nQgHaEK?rs=1&pid=ImgDetMain&o=7&rm=3">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary: #2563eb;
+        --primary-dark: #1e40af;
+        --success: #22c55e;
+        --warning: #facc15;
+        --danger: #ef4444;
+        --bg: #f8fafc;
+        --card-bg: #fff;
+        --text: #222;
+        --border: #e5e7eb;
+        --shadow: 0 4px 24px rgba(0,0,0,0.08);
+        --input-bg: #f1f5f9;
+        --input-focus: #e0e7ff;
+    }
+    body {
+        font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        transition: background 0.3s, color 0.3s;
+    }
+    .dark-mode {
+        --bg: #18181b;
+        --card-bg: #23232a;
+        --text: #f3f4f6;
+        --border: #333;
+        --input-bg: #18181b;
+        --input-focus: #23232a;
+    }
+    .dark-mode body,
+    .dark-mode .container {
+        background: #18181b !important;
+        color: #f3f4f6 !important;
+    }
+    .dark-mode .form-panel {
+        background: linear-gradient(135deg, #23232a 70%, #18181b 100%) !important;
+        border-color: #333 !important;
+        color: #f3f4f6 !important;
+    }
+    .dark-mode .header h1,
+    .dark-mode .header div {
+        color: #60a5fa !important;
+        text-shadow: 0 2px 8px #1e293b;
+    }
+    .dark-mode label,
+    .dark-mode .section-title {
+        color: #60a5fa !important;
+    }
+    .dark-mode input[type="number"], .dark-mode select, .dark-mode textarea {
+        background: #18181b !important;
+        color: #f3f4f6 !important;
+        border-color: #333 !important;
+    }
+    .dark-mode input[type="number"]:focus, .dark-mode select:focus, .dark-mode textarea:focus {
+        background: #23232a !important;
+        border-color: #2563eb !important;
+        box-shadow: 0 0 0 2px #2563eb55 !important;
+    }
+    .dark-mode .form-actions {
+        background: transparent !important;
+    }
+    .dark-mode input[type="submit"], .dark-mode .btn {
+        background: linear-gradient(90deg, #2563eb, #1e40af) !important;
+        color: #fff !important;
+        border: none !important;
+    }
+    .dark-mode .btn.reset {
+        background: linear-gradient(90deg, #991b1b, #ef4444) !important;
+    }
+    .dark-mode .btn.download {
+        background: linear-gradient(90deg, #166534, #22c55e) !important;
+    }
+    .dark-mode .popup-content,
+    .dark-mode .result-card {
+        background: #23232a !important;
+        color: #f3f4f6 !important;
+        border-color: #2563eb !important;
+        box-shadow: 0 8px 32px rgba(37,99,235,0.18), 0 2px 8px rgba(0,0,0,0.18);
+    }
+    .dark-mode .result-good {
+        background: linear-gradient(135deg, #166534 80%, #15803d 100%) !important;
+        color: #fff !important;
+    }
+    .dark-mode .result-standard {
+        background: linear-gradient(135deg, #fde68a 80%, #facc15 100%) !important;
+        color: #b45309 !important;
+    }
+    .dark-mode .result-bad {
+        background: linear-gradient(135deg, #991b1b 80%, #ef4444 100%) !important;
+        color: #fff !important;
+    }
+    .dark-mode .collapsible,
+    .dark-mode .result-details {
+        color: #60a5fa !important;
+    }
+    .dark-mode .collapsible:hover {
+        background: #1e293b !important;
+        color: #93c5fd !important;
+    }
+    .dark-mode .popup-close:hover {
+        color: #fff !important;
+        background: #991b1b !important;
+    }
+    .dark-mode .content {
+        color: #d1d5db !important;
+    }
+    .container {
+        max-width: 1300px;
+        margin: 40px auto;
+        padding: 0 16px;
+    }
+    .header {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+    .header h1 {
+        color: var(--primary-dark);
+        font-size: 3.1rem;
+        font-weight: 800;
+        margin-bottom: 8px;
+        letter-spacing: 0.01em;
+        text-shadow: 0 2px 8px #e0e7ff;
+    }
+    .header div {
+        font-size: 1.35em;
+        color: var(--primary);
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+    .toggle-dark {
+        position: absolute;
+        right: 32px;
+        top: 32px;
+        background: var(--card-bg);
+        border: 1.5px solid var(--border);
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow);
+        transition: background 0.3s;
+        font-size: 1.6em;
+    }
+    .flex-row {
+        display: flex;
+        gap: 60px;
+        align-items: flex-start;
+        justify-content: center;
+    }
+    .form-panel {
+        flex: 1 1 800px;
+        background: var(--card-bg);
+        border-radius: 18px;
+        box-shadow: 0 8px 32px rgba(37,99,235,0.11), 0 2px 8px rgba(0,0,0,0.08);
+        padding: 40px 60px 32px 60px;
+        border: 2.5px solid var(--primary);
+        min-width: 700px;
+        max-width: 1100px;
+        background: linear-gradient(135deg, #f8fafc 70%, #e0e7ff 100%);
+    }
+    .form-panel form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0 40px;
+    }
+    .form-panel label,
+    .form-panel .section-title {
+        width: 100%;
+    }
+    .form-panel .section-title {
+        margin-top: 0;
+        background: linear-gradient(90deg, #2563eb22 60%, #fff0 100%);
+        border-radius: 8px;
+        animation: fadeInTitle 0.7s;
+        font-size: 1.45em;
+        color: var(--primary-dark);
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        margin-bottom: 18px;
+        padding-left: 6px;
+        padding-top: 2px;
+    }
+    @keyframes fadeInTitle {
+        from { opacity: 0; transform: translateY(-10px);}
+        to { opacity: 1; transform: translateY(0);}
+    }
+    .form-panel .form-group-half {
+        width: 48%;
+        min-width: 300px;
+        margin-bottom: 0;
+    }
+    label {
+        font-size: 1.18em;
+        font-weight: 700;
+        color: var(--primary-dark);
+        margin-bottom: 4px;
+        margin-top: 0;
+        letter-spacing: 0.01em;
+    }
+    .tooltip {
+        border-bottom: 1px dotted #888;
+        cursor: help;
+        text-decoration: none;
+        font-size: 0.95em;
+        color: var(--primary-dark);
+        margin-left: 2px;
+    }
+    input[type="number"], select {
+        width: 100%;
+        padding: 13px 14px;
+        margin-top: 6px;
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        font-size: 1.18em;
+        background: var(--input-bg);
+        color: var(--text);
+        box-sizing: border-box;
+        transition: border-color 0.3s, background 0.3s;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+    }
+    input[type="number"]:focus, select:focus {
+        border-color: var(--primary-dark);
+        box-shadow: 0 0 0 2px #2563eb33;
+        outline: none;
+        background: var(--input-focus);
+    }
+    .form-actions {
+        display: flex;
+        gap: 18px;
+        margin-top: 36px;
+        width: 100%;
+    }
+    input[type="submit"], .btn {
+        flex: 1;
+        background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+        border: none;
+        padding: 18px;
+        font-size: 1.25em;
+        font-weight: 800;
+        color: white;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 8px rgba(37,99,235,0.13), 0 1.5px 4px rgba(0,0,0,0.06);
+        letter-spacing: 0.03em;
+    }
+    input[type="submit"]:hover, .btn:hover {
+        background: linear-gradient(90deg, var(--primary-dark), var(--primary));
+        transform: translateY(-2px) scale(1.04);
+        box-shadow: 0 6px 18px rgba(37,99,235,0.18), 0 2px 8px rgba(0,0,0,0.10);
+    }
+    .btn.reset {
+        background: linear-gradient(90deg, #ef4444, #b91c1c);
+    }
+    .btn.reset:hover {
+        background: linear-gradient(90deg, #b91c1c, #ef4444);
+    }
+    .btn.download {
+        background: linear-gradient(90deg, #22c55e, #15803d);
+    }
+    .btn.download:hover {
+        background: linear-gradient(90deg, #15803d, #22c55e);
+    }
+    .spinner {
+        display: none;
+        margin: 0 auto;
+        margin-top: 20px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid var(--primary);
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg);}
+        100% { transform: rotate(360deg);}
+    }
+    .result-summary {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+    .result-icon {
+        border: 2.5px solid #fff;
+        box-shadow: 0 2px 8px rgba(37,99,235,0.13);
+        font-size: 3.2rem;
+        margin-right: 8px;
+        transition: transform 0.2s;
+        width: 64px;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .result-good { background: linear-gradient(135deg, #22c55e 80%, #bbf7d0 100%);}
+    .result-standard { background: linear-gradient(135deg, #fde68a 80%, #fef9c3 100%); color: #b45309;}
+    .result-bad { background: linear-gradient(135deg, #ef4444 80%, #fee2e2 100%);}
+    .result-details {
+        font-size: 1.25em;
+        margin-bottom: 8px;
+        font-weight: 700;
+        color: var(--primary-dark);
+    }
+    .result-card {
+        border: 2.5px solid var(--primary);
+        background: linear-gradient(120deg, #fff 80%, #e0e7ff 100%);
+        border-radius: 18px;
+        box-shadow: 0 8px 32px rgba(37,99,235,0.11), 0 2px 8px rgba(0,0,0,0.08);
+        padding: 32px 24px;
+        margin-bottom: 24px;
+        text-align: center;
+        transition: background 0.3s, color 0.3s;
+    }
+    .result-card.error {
+        background: linear-gradient(120deg, #f8d7da 80%, #fef2f2 100%);
+        border-color: #a94442;
+        color: #a94442;
+    }
+    .collapsible {
+        background: none;
+        color: var(--primary);
+        cursor: pointer;
+        padding: 10px 0;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 1.15em;
+        font-weight: 700;
+        margin-top: 10px;
+        border-radius: 6px;
+        transition: background 0.2s, color 0.2s;
+    }
+    .collapsible:after {
+        content: '▼';
+        float: right;
+        margin-left: 8px;
+        font-size: 0.9em;
+        transition: transform 0.2s;
+    }
+    .collapsible.active:after {
+        transform: rotate(-180deg);
+    }
+    .collapsible:hover {
+        background: #e0e7ff44;
+        color: var(--primary-dark);
+    }
+    .content {
+        padding: 0 8px;
+        display: none;
+        overflow: hidden;
+        font-size: 1.08em;
+        color: #555;
+        margin-bottom: 10px;
+    }
+    .dark-mode .content { color: #bbb; }
+    .popup-modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 0; top: 0; width: 100vw; height: 100vh;
+        background: rgba(30,41,59,0.45);
+        align-items: center;
+        justify-content: center;
+    }
+    .popup-modal.active {
+        display: flex;
+        animation: fadeIn 0.3s;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0;}
+        to { opacity: 1;}
+    }
+    .popup-content {
+        background: rgba(255,255,255,0.93);
+        backdrop-filter: blur(10px) saturate(1.2);
+        border-radius: 24px;
+        box-shadow: 0 8px 32px rgba(37,99,235,0.18), 0 2px 8px rgba(0,0,0,0.08);
+        padding: 54px 48px 36px 48px;
+        min-width: 700px; /* Match .form-panel min-width */
+        max-width: 1100px; /* Match .form-panel max-width */
+        border: 3px solid var(--primary);
+        text-align: center;
+        animation: popupIn 0.25s;
+        position: relative;
+    }
+    @keyframes popupIn {
+        from { transform: scale(0.92); opacity: 0;}
+        to { transform: scale(1); opacity: 1;}
+    }
+    .popup-close {
+        position: absolute;
+        right: 24px;
+        top: 18px;
+        font-size: 2em;
+        color: var(--danger);
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        transition: color 0.2s, background 0.2s;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .popup-close:hover {
+        color: #fff;
+        background: var(--danger);
+    }
+    /* Responsive tweaks */
+    @media (max-width: 900px) {
+        .flex-row { flex-direction: column; gap: 0; }
+        .form-panel { max-width: 100%; min-width: 0; padding: 16px 2px; }
+        .popup-content { padding: 16px 4px 12px 4px; min-width: 0; max-width: 100%; }
+    }
+    @media (max-width: 600px) {
+        .form-panel { padding: 10px 2px; min-width: 0; }
+        .popup-content { padding: 8px 2px 8px 2px; }
+        .header h1 { font-size: 2em; }
+    }
+</style>
+<script>
+    function showSpinner() {
+        document.getElementById('spinner').style.display = 'block';
+    }
+    function resetForm() {
+        window.location.href = '/';  // Redirect to home to load defaults
+    }
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+    }
+    function attachCollapsible() {
+        var coll = document.getElementsByClassName("collapsible");
+        for (var i = 0; i < coll.length; i++) {
+            coll[i].onclick = function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            };
+            // Always hide content by default
+            var content = coll[i].nextElementSibling;
+            if (content) content.style.display = "none";
+        }
+    }
+    function showPopup() {
+        document.getElementById('resultPopup').classList.add('active');
+    }
+    function closePopup() {
+        document.getElementById('resultPopup').classList.remove('active');
+    }
+    window.onload = function() {
+        // Restore dark mode
+        if(localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+        }
+        attachCollapsible();
+        toggleInputMode(); // This will respect the checked state from the server
+        {% if prediction_text %}
+        setTimeout(showPopup, 200);
+        {% endif %}
+    }
+    function downloadResult() {
+        var el = document.getElementById('resultCard');
+        if (!el) return;
+        // Official report formatting
+        var report = '';
+        report += '--- Credit Score Official Report ---\n\n';
+        // Main result
+        var main = el.querySelector('.result-details');
+        if (main) {
+            // Remove HTML tags for plain text
+            var tempDiv = document.createElement('div');
+            tempDiv.innerHTML = main.innerHTML;
+            report += 'Result: ' + tempDiv.textContent.trim() + '\n\n';
+        }
+        // Input summary
+        var inputSummary = el.querySelector('.content ul');
+        if (inputSummary) {
+            report += 'Input Summary:\n';
+            var items = inputSummary.querySelectorAll('li');
+            for (var i = 0; i < items.length; i++) {
+                report += '- ' + items[i].innerText + '\n';
+            }
+            report += '\n';
+        }
+        // Model info
+        var modelInfo = el.querySelectorAll('.content ul')[1];
+        if (modelInfo) {
+            report += 'Model Info:\n';
+            var items = modelInfo.querySelectorAll('li');
+            for (var i = 0; i < items.length; i++) {
+                report += '- ' + items[i].innerText + '\n';
+            }
+        }
+        report += '\n--- End of Report ---\n';
+        var blob = new Blob([report], {type: "text/plain"});
+        var link = document.createElement('a');
+        link.download = "credit_score_report.txt";
+        link.href = window.URL.createObjectURL(blob);
+        link.click();
+    }
+    function insertBadExample() {
+        document.getElementById('json_input').value = `{
+    'Age': 30,
+    'Occupation': 'Engineer',
+    'Annual_Income': 50000,
+    'Monthly_Inhand_Salary': 3000,
+    'Num_Bank_Accounts': 2,
+    'Num_Credit_Card': 1,
+    'Interest_Rate': 10.0,
+    'Num_of_Loan': 1,
+    'Type_of_Loan': 'Personal Loan',
+    'Delay_from_due_date': 0,
+    'Num_of_Delayed_Payment': 0,
+    'Changed_Credit_Limit': 0,
+    'Num_Credit_Inquiries': 1,
+    'Credit_Mix': 'Good',
+    'Outstanding_Debt': 1000,
+    'Credit_Utilization_Ratio': 0.3,
+    'Credit_History_Age': 24,
+    'Payment_of_Min_Amount': 'Yes',
+    'Total_EMI_per_month': 300,
+    'Amount_invested_monthly': 200,
+    'Payment_Behaviour': 'High_spent_Small_value_payments',
+    'Monthly_Balance': 1000
+}`;
+    }
+    function toggleInputMode() {
+        var manual = document.getElementById('input_mode_manual').checked;
+        document.getElementById('manualFields').style.display = manual ? '' : 'none';
+        document.getElementById('jsonFields').style.display = manual ? 'none' : '';
+    }
+</script>
+</head>
+<body>
+    <button class="toggle-dark" onclick="toggleDarkMode()" title="Toggle dark mode">
+        <span id="darkIcon" style="font-size:1.3em;">🌙</span>
+    </button>
+    <div class="container">
+        <div class="header">
+            <h1>Credit Score Predictor</h1>
+            <div style="color:var(--primary-dark);font-size:1.1em;font-weight:500;">Get instant, AI-powered credit score insights</div>
+        </div>
+        <div class="flex-row">
+            <div class="form-panel">
+                <form id="predictForm" action="/predict" method="post" onsubmit="showSpinner()">
+                    <div style="margin-bottom:18px;width:100%;">
+                        <label style="font-weight:600;">Input Mode:</label>
+                        <label style="margin-right:18px;">
+                            <input type="radio" name="input_mode" value="manual" id="input_mode_manual"
+                                {% if not defaults.get('input_mode') or defaults.get('input_mode') == 'manual' %}checked{% endif %}
+                                onchange="toggleInputMode()"> Manual Entry
+                        </label>
+                        <label>
+                            <input type="radio" name="input_mode" value="json" id="input_mode_json"
+                                {% if defaults.get('input_mode') == 'json' %}checked{% endif %}
+                                onchange="toggleInputMode()"> JSON Input
+                        </label>
+                    </div>
+                    <div id="manualFields" style="{% if defaults.get('input_mode') == 'json' %}display:none;{% endif %};width:100%;">
+                        <div class="section-title">Personal Information</div>
+                        <div style="display:flex;flex-wrap:wrap;gap:0 32px;">
+                        {% for field in [
+                            ('Age', 'number', 1, 'Your age in years'),
+                            ('Occupation', 'select', None, 'Your current occupation'),
+                            ('Annual_Income', 'number', 0.01, 'Yearly income in USD'),
+                            ('Monthly_Inhand_Salary', 'number', 0.01, 'Monthly take-home salary in USD'),
+                        ] %}
+                            <div class="form-group-half" style="margin-bottom:18px;">
+                                <label for="{{ field[0] }}">
+                                    {{ field[0].replace('_', ' ') }}
+                                    <span class="tooltip" title="{{ field[3] }}">&#9432;</span>
+                                </label>
+                                {% if field[1] == 'select' %}
+                                    <select id="{{ field[0] }}" name="{{ field[0] }}" required title="{{ field[3] }}">
+                                        {% set options = [] %}
+                                        {% if field[0] == 'Occupation' %}
+                                            {% set options = [
+                                                'Scientist', 'Teacher', 'Engineer', 'Entrepreneur', 'Developer',
+                                                'Lawyer', 'Media_Manager', 'Doctor', 'Journalist', 'Manager', 'Accountant',
+                                                'Musician', 'Mechanic', 'Writer', 'Architect'
+                                            ] %}
+                                        {% endif %}
+                                        {% for option in options %}
+                                            <option value="{{ option }}" {% if defaults and defaults.get(field[0]) == option %}selected{% endif %}>{{ option }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% else %}
+                                    <input
+                                        type="number"
+                                        step="{{ field[2] }}"
+                                        id="{{ field[0] }}"
+                                        name="{{ field[0] }}"
+                                        {% if field[0] != 'Changed_Credit_Limit' %}min="0"{% endif %}
+                                        value="{{ defaults.get(field[0]) if defaults else '' }}"
+                                        required
+                                        title="{{ field[3] }}"
+                                    >
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        </div>
+                        <div class="section-title" style="margin-top:24px;">Banking & Credit Details</div>
+                        <div style="display:flex;flex-wrap:wrap;gap:0 32px;">
+                        {% for field in [
+                            ('Num_Bank_Accounts', 'number', 1, 'Number of bank accounts you have'),
+                            ('Num_Credit_Card', 'number', 1, 'Number of credit cards'),
+                            ('Interest_Rate', 'number', 0.01, 'Average interest rate (%)'),
+                            ('Num_of_Loan', 'number', 1, 'Number of loans taken'),
+                            ('Type_of_Loan', 'select', None, 'Type of your main loan'),
+                            ('Delay_from_due_date', 'number', 1, 'Average days delayed from due date'),
+                            ('Num_of_Delayed_Payment', 'number', 1, 'Number of delayed payments'),
+                            ('Changed_Credit_Limit', 'number', 0.01, 'Change in credit limit (USD)'),
+                            ('Num_Credit_Inquiries', 'number', 1, 'Number of credit inquiries'),
+                            ('Credit_Mix', 'select', None, 'Mix of credit types'),
+                            ('Outstanding_Debt', 'number', 0.01, 'Outstanding debt (USD)'),
+                            ('Credit_Utilization_Ratio', 'number', 0.01, 'Credit utilization ratio (0-1)'),
+                            ('Credit_History_Age', 'number', 0.01, 'Credit history age (months)'),
+                            ('Payment_of_Min_Amount', 'select', None, 'Do you pay minimum amount?'),
+                            ('Total_EMI_per_month', 'number', 0.01, 'Total EMI per month (USD)'),
+                            ('Amount_invested_monthly', 'number', 0.01, 'Monthly investment amount (USD)'),
+                            ('Payment_Behaviour', 'select', None, 'Your payment behaviour'),
+                            ('Monthly_Balance', 'number', 0.01, 'Monthly balance (USD) - Can be negative if expenses exceed income')
+                        ] %}
+                            <div class="form-group-half" style="margin-bottom:18px;">
+                                <label for="{{ field[0] }}">
+                                    {{ field[0].replace('_', ' ') }}
+                                    <span class="tooltip" title="{{ field[3] }}">&#9432;</span>
+                                </label>
+                                {% if field[1] == 'select' %}
+                                    <select id="{{ field[0] }}" name="{{ field[0] }}" required title="{{ field[3] }}">
+                                        {% set options = [] %}
+                                        {% if field[0] == 'Type_of_Loan' %}
+                                            {% set options = [
+                                                'Auto Loan',
+                                                'Credit-Builder Loan',
+                                                'Personal Loan',
+                                                'Home Equity Loan',
+                                                'Mortgage Loan',
+                                                'Payday Loan',
+                                                'Student Loan'
+                                            ] %}
+                                        {% elif field[0] == 'Credit_Mix' %}
+                                            {% set options = ['Good', 'Standard', 'Bad'] %}
+                                        {% elif field[0] == 'Payment_of_Min_Amount' %}
+                                            {% set options = ['Yes', 'No'] %}
+                                        {% elif field[0] == 'Payment_Behaviour' %}
+                                            {% set options = [
+                                                'High_spent_Small_value_payments',
+                                                'High_spent_Medium_value_payments',
+                                                'High_spent_Large_value_payments',
+                                                'Low_spent_Small_value_payments',
+                                                'Low_spent_Medium_value_payments',
+                                                'Low_spent_Large_value_payments'
+                                            ] %}
+                                        {% endif %}
+                                        {% for option in options %}
+                                            <option value="{{ option }}" {% if defaults and defaults.get(field[0]) == option %}selected{% endif %}>{{ option }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% else %}
+                                    <input
+                                        type="number"
+                                        step="{{ field[2] }}"
+                                        id="{{ field[0] }}"
+                                        name="{{ field[0] }}"
+                                        {% if field[0] == 'Credit_Utilization_Ratio' %}
+                                            min="0" max="1"
+                                        {% elif field[0] not in ['Changed_Credit_Limit', 'Monthly_Balance'] %}min="0"{% endif %}
+                                        value="{{ defaults.get(field[0]) if defaults else '' }}"
+                                        required
+                                        title="{{ field[3] }}"
+                                    >
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                    <div id="jsonFields" style="{% if not defaults.get('input_mode') or defaults.get('input_mode') == 'manual' %}display:none;{% endif %}">
+                        <label for="json_input" style="font-weight:600;">Paste JSON input:</label>
+                        <textarea id="json_input" name="json_input" rows="7" style="width:100%;font-size:15px;padding:10px;border-radius:7px;border:1px solid var(--border);background:var(--card-bg);color:var(--text);" placeholder='{"Age":22, ...}'>{% if defaults.get('json_input') %}{{ defaults.get('json_input') }}{% endif %}</textarea>
+                        <button type="button" class="btn" style="margin-top:8px;background:var(--warning);color:#b45309;" onclick="insertBadExample()">Insert Example Input</button>
+                    </div>
+                    <div class="form-actions">
+                        <input type="submit" value="Predict Credit Score" />
+                        <button type="button" class="btn reset" onclick="resetForm()">Reset</button>
+                        <button type="button" class="btn download" onclick="downloadResult()">Download Result</button>
+                    </div>
+                    <div id="spinner" class="spinner"></div>
+                </form>
+            </div>
+        </div>
+        <div id="resultPopup" class="popup-modal" onclick="closePopup()">
+            <div class="popup-content" onclick="event.stopPropagation();">
+                <button class="popup-close" onclick="closePopup()" title="Close">&times;</button>
+                {% if prediction_text %}
+                    <div class="result-card{% if 'Error:' in prediction_text %} error{% endif %}" id="resultCard" style="margin-bottom:0;">
+                        {% set icon = '❓' %}
+                        {% set color = 'result-standard' %}
+                        {% if 'Good' in prediction_text %}
+                            {% set icon = '✅' %}
+                            {% set color = 'result-good' %}
+                        {% elif 'Bad' in prediction_text %}
+                            {% set icon = '⚠️' %}
+                            {% set color = 'result-bad' %}
+                        {% elif 'Standard' in prediction_text %}
+                            {% set icon = 'ℹ️' %}
+                            {% set color = 'result-standard' %}
+                        {% elif 'Error:' in prediction_text %}
+                            {% set icon = '❌' %}
+                            {% set color = 'result-bad' %}
+                        {% endif %}
+                        <div class="result-summary">
+                            <span class="result-icon {{ color }}">{{ icon }}</span>
+                            <span>
+                                <span class="result-details">{{ prediction_text|safe }}</span>
+                            </span>
+                        </div>
+                        <button type="button" class="collapsible">Show Advanced Details</button>
+                        <div class="content">
+                            <b>Input Summary:</b>
+                            <ul style="text-align:left;max-height:180px;overflow:auto;">
+                                {% for k, v in defaults.items() %}
+                                    <li><b>{{ k.replace('_',' ') }}:</b> {{ v }}</li>
+                                {% endfor %}
+                            </ul>
+                            <b>Model Info:</b>
+                            <ul style="text-align:left;">
+                                <li>AI Model: Credit Score Classifier</li>
+                                <li>Categories: Good, Standard, Bad</li>
+                                <li>Confidence and explanation shown above</li>
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
