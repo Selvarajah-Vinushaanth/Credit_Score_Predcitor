@@ -28,7 +28,7 @@ Download the necessary model files from the link below and place them in your pr
 - `scaler.pkl`
 - `label_encoders.pkl`
 
-🔗 [Download Model Files](https://your-download-link.com)
+🔗 [Download Model Files](https://drive.google.com/drive/folders/1PIqq1qhPNSAO-xJcPHa2iOWdJhmA1iHK?usp=sharing)
 
 ---
 
@@ -44,41 +44,39 @@ Download the necessary model files from the link below and place them in your pr
 ---
 
 ## 📦 Project Structure
-
-├── app.py # Flask backend
-├── templates/
-│ └── index.html # HTML UI
-├── credit_score_model.pkl # Trained ML model
-├── scaler.pkl # Scaler for numeric features
-├── label_encoders.pkl # Encoders for categorical features
-├── requirements.txt # Python dependencies
-└── README.md
+app.py # Flask backend
+templates/
+  index.html # HTML UI
+credit_score_model.pkl # Trained ML model
+scaler.pkl # Scaler for numeric features
+label_encoders.pkl # Encoders for categorical features
+requirements.txt # Python dependencies
+README.md
 
 
 ---
-
 ## 🛠️ Getting Started
 
-### 1. Clone the repository
-
 ```bash
+# 1. Clone the repository
 git clone https://github.com/<your-username>/Credit-Score-Predictor.git
 cd Credit-Score-Predictor
 
-### 2. Create virtual environment
-
+# 2. Create a virtual environment
 python -m venv venv
-source venv/bin/activate        # For Linux/macOS
-venv\Scripts\activate           # For Windows
 
-### 2. Install dependencies
+# 3. Activate the environment
+# For Windows:
+venv\Scripts\activate
+# For Linux/macOS:
+source venv/bin/activate
+
+# 4. Install dependencies
 pip install -r requirements.txt
 
-### 2.  Run the Flask app
+# 5. Run the Flask app
 python app.py
-Visit: http://127.0.0.1:5000
 
-📥 Download the `scaler.pkl`, `credit_score_model.pkl`, and `label_encoders.pkl` files from this link: [MODEL DOWNLOAD LINK](https://drive.google.com/drive/folders/1PIqq1qhPNSAO-xJcPHa2iOWdJhmA1iHK?usp=sharing)
-
-
+# Visit the app in your browser
+# http://127.0.0.1:5000
 
