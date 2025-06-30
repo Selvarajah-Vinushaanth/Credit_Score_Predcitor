@@ -44,14 +44,15 @@ Download the necessary model files from the link below and place them in your pr
 ---
 
 ## 📦 Project Structure
-app.py # Flask backend
-templates/
-  index.html # HTML UI
-credit_score_model.pkl # Trained ML model
-scaler.pkl # Scaler for numeric features
-label_encoders.pkl # Encoders for categorical features
-requirements.txt # Python dependencies
-README.md
+Credit-Score-Predictor/
+├── app.py # Flask backend
+├── templates/
+│ └── index.html # HTML UI
+├── credit_score_model.pkl # Trained ML model
+├── scaler.pkl # Scaler for numeric features
+├── label_encoders.pkl # Encoders for categorical features
+├── requirements.txt # Python dependencies
+└── README.md # Project documentation
 
 
 ---
@@ -59,7 +60,7 @@ README.md
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/<your-username>/Credit-Score-Predictor.git
+git clone https://github.com/Selvarajah-Vinushaanth/Credit_Score_Predcitor.git
 cd Credit-Score-Predictor
 
 # 2. Create a virtual environment
